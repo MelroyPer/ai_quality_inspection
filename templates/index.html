@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Capture Image</title>
+    <style>
+        .image-container {
+            width: 400px;
+            height: 300px;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+        img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        button, select, input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 8px 0;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📏 Dimensional Measurement</h1>
+
+    <form method="post">
+        <!-- 1. Model Number -->
+         <label for="model_number">Model Number:</label><br>
+        <input type="text" name="model_number" placeholder="Model Number" value="{{ model_number or '' }}" required><br>
+
+        <!-- 2. Part Number (Dynamic Dropdown) -->
+        <label for="part_number">Part Number:</label><br>
+        <select name="part_number" id="part_number" required>
+            <option value="">-- Choose a part --</option>
+            {% for part in part_numbers %}
+                <option value="{{ part }}" {% if part == selected_part %}selected{% endif %}>{{ part }}</option>
+            {% endfor %}
+        </select><br>
+
+        <!-- 3. Measurement Type (Static Dropdown) -->
+        <label for="measurement_type">Measurement Type:</label><br>
+        <select name="measurement_type" id="measurement_type" required>
+            <option value="">-- Choose measurement --</option>
+            <option value="buckle_length" {% if measurement_type == 'buckle_length' %}selected{% endif %}>Buckle Length</option>
+            <option value="wire_harness_length" {% if measurement_type == 'wire_harness_length' %}selected{% endif %}>Wire Harness Length</option>
+            <option value="webbing_precut_length" {% if measurement_type == 'webbing_precut_length' %}selected{% endif %}>Webbing Precut Length</option>
+            <option value="locking_bar_length" {% if measurement_type == 'locking_bar_length' %}selected{% endif %}>Locking Bar Length</option>
+            <option value="buckle_channel_width" {% if measurement_type == 'buckle_channel_width' %}selected{% endif %}>Buckle Channel Width</option>
+            <option value="riveting_height" {% if measurement_type == 'riveting_height' %}selected{% endif %}>Riveting Height</option>
+            <option value="rivet_diameter" {% if measurement_type == 'rivet_diameter' %}selected{% endif %}>Rivet Diameter</option>
+        </select><br>
+
+
+        <!-- 4 Shift Name -->
+        <label for="shift_name">Shift Name:</label><br>
+        <select name="shift_name" id="shift_name" required>
+            <option value="">-- Choose shift --</option>
+            <option value="day" {% if shift_name == 'day' %}selected{% endif %}>First</option>
+            <option value="night" {% if shift_name == 'night' %}selected{% endif %}>Second</option>
+            <option value="third" {% if shift_name == 'third' %}selected{% endif %}>Third</option>
+        </select><br>
+
+
+        <!-- 5. Image Display Area -->
+        <div class="image-container">
+            {% if measurement_exists %}
+                <img src="{{ url_for('static', filename='greyscale.jpg') }}" alt="Greyscale Image">
+            {% elif image_exists %}
+                <img src="{{ url_for('static', filename='capture.jpg') }}" alt="Captured Image">
+            {% else %}
+                <span>No image captured yet.</span>
+            {% endif %}
+        </div>
+
+        <!-- 5. Click Button -->
+        <!-- <button type="submit" name="action" value="capture">📸 Click Image</button> -->
+
+        <!-- 6. Action Buttons -->
+        {% if not image_exists %}
+            <button type="submit" name="capture">📸 Click Image</button>
+        {% elif image_exists and not measurement_exists %}
+            <button type="submit" name="measurement">📏 Measurement</button>
+        {% elif image_exists and measurement_exists %}
+            <button type="submit" name="submit">✅ Submit</button>
+        {% endif %}
+
+
+        <!-- 6. Measurement Button (only shown if image exists) -->
+        <!-- {% if image_exists %}
+            <button type="submit" name="action" value="measure">📏 Measurement</button>
+        {% endif %} -->
+    </form>
+
+</body>
+</html>
